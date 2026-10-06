@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-import { string } from "zod";
-
+import mongoose, { Document } from "mongoose";
 export interface ITestCase {
   input: string;
   output: string;
@@ -59,6 +57,14 @@ const problemSchema = new mongoose.Schema<IProblem>(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform: (_, record: any) => {
+        delete record.__v;
+        record.id = record._id;
+        delete record._id;
+        return record;
+      },
+    },
   },
 );
 problemSchema.index({ title: 1 }, { unique: true });
