@@ -9,7 +9,7 @@ export interface IProblem extends Document {
   description: string;
   difficulty: "easy" | "medium" | "hard";
   editorial?: string;
-  testCases: ITestCase[];
+  testcases: ITestCase[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,7 +53,7 @@ const problemSchema = new mongoose.Schema<IProblem>(
       type: String,
       trim: true,
     },
-    testCases: [testCaseSchema],
+    testcases: [testCaseSchema],
   },
   {
     timestamps: true,
