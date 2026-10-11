@@ -35,7 +35,7 @@ export class ProblemService implements IProblemService {
 
   async getProblemById(id: string): Promise<any> {
     const problem = await this.problemRepository.getProblemById(id);
-    if (problem) {
+    if (!problem) {
       throw new NotFoundError("Problem not found");
     }
     return problem;

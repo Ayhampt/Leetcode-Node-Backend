@@ -28,9 +28,9 @@ export async function getProblemById(
   problemId: string,
 ): Promise<IProblemDetails | null> {
   try {
-    const url = `${serverConfig.PROBLEM_SERVICE}/problems/${problemId}`;
+    const url = `${serverConfig.PROBLEM_SERVICE}/api/v1/problems/${problemId}`;
     logger.info("Getting problem by ID", { url });
-    // TODO: Improve the axios api error handling
+    
     const response: AxiosResponse<IProlemReponse> = await axios.get(url);
 
     if (response.data.success) {
