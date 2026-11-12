@@ -10,9 +10,7 @@ import logger from "./config/logger.config";
 import { attachCorrelationIdMiddleware } from "./middlewares/correlation.middleware";
 import { startWorker } from "./worker/evaluation.worker";
 import { pullAllImages } from "./utils/container/pullimage.util";
-import { createNewDockerContainer } from "./utils/container/createContainer.utils";
-import { PYTHON_IMAGE } from "./utils/constants.utils";
-import { runPythonCode } from "./utils/container/codeRunner.utils";
+import { runCode } from "./utils/container/codeRunner.utils";
 const app = express();
 
 app.use(express.json());
@@ -41,13 +39,36 @@ app.listen(serverConfig.PORT, async () => {
   logger.info(`All images pulled successfully`);
 
   await testPythonCode();
+  await testCppCode();
 });
 async function testPythonCode() {
-  const pythonCode = `
-  for i in range(5):
-    print(i)
-  print("good bye")
-  `;
+  const pythonCode = `for i in range(5):
+  print(i)
+print("good bye")`;
 
-  await runPythonCode(pythonCode);
+  await runCode({
+    language: "python",
+    code: pythonCode,
+    timeout: 5000,
+  });
+}
+
+async function testCppCode() {
+  const cppCode = `
+  #include <iostream>
+  using namespace std;
+
+  int main() {
+    for (int i = 0; i < 5; i++) {
+      cout << i << endl;
+    }
+    cout << "good bye" << endl;
+    return 0;
+  }
+`;
+  await runCode({
+    language: "cpp",
+    code: cppCode,
+    timeout: 5000,
+  });
 }
