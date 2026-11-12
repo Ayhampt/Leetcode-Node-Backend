@@ -12,6 +12,7 @@ import { startWorker } from "./worker/evaluation.worker";
 import { pullAllImages } from "./utils/container/pullimage.util";
 import { createNewDockerContainer } from "./utils/container/createContainer.utils";
 import { PYTHON_IMAGE } from "./utils/constants.utils";
+import { runPythonCode } from "./utils/container/codeRunner.utils";
 const app = express();
 
 app.use(express.json());
@@ -42,26 +43,11 @@ app.listen(serverConfig.PORT, async () => {
   await testPythonCode();
 });
 async function testPythonCode() {
-  const pythonCode = `print("Hello from Python!")`;
+  const pythonCode = `
+  for i in range(5):
+    print(i)
+  print("good bye")
+  `;
 
-  const runCommand = `echo '${pythonCode}' > code.py && python3 code.py`;
-
-  const container = await createNewDockerContainer({
-    imageName: PYTHON_IMAGE,
-    cmdExecutable: ["/bin/bash", "-c", runCommand],
-    memoryLimit: 1024 * 1024 * 1024, // 512MB
-  });
-  console.log(`Container created successfully :${container?.id}`);
-
-  await container?.start();
-  const status = await container?.wait();
-  console.log("container status", status);
-
-  const logs = await container?.logs({
-    stdout: true,
-    stderr: true,
-  });
-  console.log("container logs", logs?.toString());
-
-  await container?.remove()
+  await runPythonCode(pythonCode);
 }
